@@ -2,11 +2,16 @@ package com.example.recyclerviewdemo
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ExpandableListView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.resources.Compatibility.Api21Impl.inflate
 import androidx.recyclerview.widget.RecyclerView
 
-class MyRecyclerViewAdapter : RecyclerView.Adapter<MyViewHolder>(){
+class MyRecyclerViewAdapter(
+    private val fruitsList:List<Fruit>,
+    private val clickListener: (Fruit)->Unit
+    ) : RecyclerView.Adapter<MyViewHolder>(){
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
@@ -15,14 +20,23 @@ class MyRecyclerViewAdapter : RecyclerView.Adapter<MyViewHolder>(){
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-       holder.myTextView.text = "Hello from onBindViewHolder $position"
+       val fruit = fruitsList[position]
+       holder.bind(fruit,clickListener)
     }
 
     override fun getItemCount(): Int {
-        return 5
+        return fruitsList.size
     }
 }
 
+
 class MyViewHolder(val view: View):RecyclerView.ViewHolder(view){
-  val myTextView = view.findViewById<TextView>(R.id.tvName)
-}
+  fun bind(fruit: Fruit, clickListener: (Fruit)-> Unit) {
+      val myTextView = view.findViewById<TextView>(R.id.tvName)
+      myTextView.text = fruit.name
+
+      view.setOnClickListener {
+          clickListener(fruit)
+      }
+    }
+  }
